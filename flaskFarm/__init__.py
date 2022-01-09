@@ -1,7 +1,12 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+
+from flask import Flask, render_template, request, redirect, session, flash
 import pandas as pd
-from flaskFarm import db
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from flaskFarm import db, utils
+from flaskFarm.db import get_db
+from flaskFarm.utils import login_required
 
 
 def create_app(test_config=None):
@@ -9,6 +14,7 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config["DATABASE"] = os.path.join(
         app.instance_path, "flaskFarm.sqlite")
+    app.config["SECRET_KEY"] = "nhu"
 
     # ensure the instance folder exists
     try:
@@ -20,16 +26,125 @@ def create_app(test_config=None):
     def hello():
         return "Hello, World!"
 
+    # Register database functions with the Flask app
     db.init_app(app)
 
     # get the database
     with app.app_context():
         db.init_db()
 
-    # Get the uploaded files
+    @app.route("/")
+    @login_required
+    def index():
+        """Show homepage"""
+        return render_template("index.html")
 
-    @app.route("/upload", methods=["GET", "POST"])
+    @app.route("/register", methods=["GET", "POST"])
+    def register():
+        """Register user"""
+
+        # form submitted via POST
+        if request.method == "POST":
+
+            username = request.form.get("username")
+            password = request.form.get("password")
+            db = get_db()
+            # Ensure user input a username:
+            if not username:
+                flash("missing username")
+                return render_template("register.html")
+            # Ensure user input a password:
+            elif not password or not request.form.get("confirmation"):
+                flash("missing password")
+                return render_template("register.html")
+
+            # Ensure password is match with confirmation
+            if request.form.get("password") != request.form.get("confirmation"):
+                flash("oops, password doesn't match")
+                return render_template("register.html")
+
+            # Generate a hash of the password and add user to database
+            usernameCheck = db.execute(
+                "SELECT * FROM user WHERE username = ?", (username,)).fetchone()
+
+            print('usernameCHekc', usernameCheck)
+
+            if usernameCheck == None or len(usernameCheck) == 0:
+                db.execute("INSERT INTO user (username, hash) VALUES (?, ?)",
+                           (username, generate_password_hash(password)),)
+                db.commit()
+                return redirect("/login")
+
+            # except the case username exist in our database
+            elif len(usernameCheck) != 0:
+                flash("sorry, this username already existed")
+                return render_template("register.html")
+
+        # When request via GET, display registration form
+        else:
+            return render_template("register.html")
+
+    @app.route("/login", methods=["GET", "POST"])
+    def login():
+        """Log user in"""
+
+        # Forget any user_id
+        session.clear()
+        # User reached route via POST (as by submitting a form via POST)
+        if request.method == "POST":
+
+            username = request.form.get("username")
+            password = request.form.get("password")
+            db = get_db()
+            # Ensure username was submitted
+            if not username:
+                flash("You must provide username")
+                return render_template("login.html")
+            # Ensure password was submitted
+            elif not password:
+                flash("You must provide password")
+                return render_template("login.html")
+
+            # Query database for username
+            user = db.execute(
+                "SELECT * FROM user WHERE username = ?", (username,)).fetchone()
+
+            # Ensure user already registered
+            if user == None:
+                flash("This username haven't been registered!")
+                return redirect("/register")
+            # Ensure username exists
+            if len(user) != 3:
+                flash("invalid username")
+                return render_template("login.html")
+            # Ensure password is correct
+            if check_password_hash(user["hash"], password) == False:
+                flash("invalid password")
+                return render_template("login.html")
+
+            # Remember which user has logged in
+            session["user_id"] = user["id"]
+            # Redirect user to home page
+            return redirect("/")
+
+        # User reached route via GET (as by clicking a link or via redirect)
+        else:
+            return render_template("login.html")
+
+    @ app.route("/logout")
+    def logout():
+        """Log user out"""
+
+        # Forget any user_id
+        session.clear()
+
+        # Redirect user to login form
+        return redirect("/")
+
+    @ app.route("/upload", methods=["GET", "POST"])
+    @login_required
     def uploadFiles():
+        """Get the uploaded files from user"""
 
         # get the uploaded file
         if request.method == "POST":
