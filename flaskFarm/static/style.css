@@ -1,0 +1,32 @@
+/* Size for brand */
+nav .navbar-brand
+{
+    font-size: xx-large;
+}
+
+/* Colors for brand */
+nav .navbar-brand .yellow
+{
+    color: #f5b82e;
+}
+nav .navbar-brand .green
+{
+    color: #2e944b;
+}
+
+table {
+    margin-bottom: 1rem;
+    width: 100%;
+
+}
+
+tbody td ,
+table th {
+    padding: 0.5rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #2e944b;
+}
+tfoot td {
+    padding: 0.5rem;
+    vertical-align: middle;
+}
