@@ -165,9 +165,31 @@ def create_app(test_config=None):
 
     def parseCSV(filePath):
         # CVS Column Names
-        col_names = ["Farm name", "datetime", "metric type", "metric value"]
+        col_names = ["Farm_name", "datetime", "metric_type", "metric_value"]
         # Use Pandas to parse the CSV file
         csvData = pd.read_csv(filePath, names=col_names, header=None)
         print(csvData)
 
+        # get current user_id to query more information
+        db = get_db()
+        user_id = session.get("user_id")
+        user = db.execute(
+            "SELECT * FROM user WHERE id = ?", (user_id,)).fetchone()
+        username = user["username"]
+        # create a new table if the user is new to the site
+        # Check if user have their table yet?
+        user_table = db.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name=?", (username,)).fetchone()
+        print('user table:', user_table)
+        if user_table == None:
+            db.execute('''CREATE TABLE {} (
+                       Farm_name TEXT NOT NULL,
+                       datetime DATETIME,
+                       metric_type TEXT NOT NULL, 
+                       metric_value NUMERIC NOT NULL)'''.format(username,))
+            db.commit()
+
+        else:
+
+            db.execute()
     return app
