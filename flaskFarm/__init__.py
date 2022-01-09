@@ -48,7 +48,7 @@ def create_app(test_config=None):
                 return render_template("error.html")
 
             # Ensure username doesn't exist in our database
-            userCheck = db.execute(
+            userCheck = get_db().execute(
                 "SELECT * FROM users WHERE username = ?", request.form.get("username"))
             if len(userCheck) != 0:
                 flash("sorry, this username already existed")
@@ -106,16 +106,26 @@ def create_app(test_config=None):
         else:
             return render_template("login.html")
 
+    @ app.route("/logout")
+    def logout():
+        """Log user out"""
+
+        # Forget any user_id
+        session.clear()
+
+        # Redirect user to login form
+        return redirect("/")
+
     @ app.route("/upload", methods=["GET", "POST"])
     def uploadFiles():
         """Get the uploaded files from user"""
 
         # get the uploaded file
         if request.method == "POST":
-            uploaded_file= request.files["file"]
+            uploaded_file = request.files["file"]
             # set the file path
             if uploaded_file.filename != '':
-                file_path= os.path.join(
+                file_path = os.path.join(
                     app.instance_path, uploaded_file.filename)
                 # save the file
                 uploaded_file.save(file_path)
@@ -129,9 +139,9 @@ def create_app(test_config=None):
 
     def parseCSV(filePath):
         # CVS Column Names
-        col_names= ["Farm name", "datetime", "metric type", "metric value"]
+        col_names = ["Farm name", "datetime", "metric type", "metric value"]
         # Use Pandas to parse the CSV file
-        csvData= pd.read_csv(filePath, names=col_names, header=None)
+        csvData = pd.read_csv(filePath, names=col_names, header=None)
         print(csvData)
 
     return app
