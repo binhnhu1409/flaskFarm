@@ -52,30 +52,33 @@ def create_app(test_config=None):
             # Ensure user input a username:
             if not username:
                 flash("missing username")
-                return render_template("error.html")
+                return render_template("register.html")
             # Ensure user input a password:
             elif not password or not request.form.get("confirmation"):
                 flash("missing password")
-                return render_template("error.html")
+                return render_template("register.html")
 
             # Ensure password is match with confirmation
             if request.form.get("password") != request.form.get("confirmation"):
                 flash("oops, password doesn't match")
-                return render_template("error.html")
+                return render_template("register.html")
 
             # Generate a hash of the password and add user to database
-            userCheck = db.execute(
+            usernameCheck = db.execute(
                 "SELECT * FROM user WHERE username = ?", (username,)).fetchone()
-            if userCheck == None or len(userCheck) == 0:
+
+            print('usernameCHekc', usernameCheck)
+
+            if usernameCheck == None or len(usernameCheck) == 0:
                 db.execute("INSERT INTO user (username, hash) VALUES (?, ?)",
                            (username, generate_password_hash(password)),)
                 db.commit()
                 return redirect("/login")
 
             # except the case username exist in our database
-            elif len(userCheck) != 0:
+            elif len(usernameCheck) != 0:
                 flash("sorry, this username already existed")
-                return render_template("error.html")
+                return render_template("register.html")
 
         # When request via GET, display registration form
         else:
@@ -90,27 +93,37 @@ def create_app(test_config=None):
         # User reached route via POST (as by submitting a form via POST)
         if request.method == "POST":
 
+            username = request.form.get("username")
+            password = request.form.get("password")
+            db = get_db()
             # Ensure username was submitted
-            if not request.form.get("username"):
+            if not username:
                 flash("You must provide username")
-                return render_template("error.html")
+                return render_template("login.html")
             # Ensure password was submitted
-            elif not request.form.get("password"):
+            elif not password:
                 flash("You must provide password")
-                return render_template("error.html")
+                return render_template("login.html")
 
             # Query database for username
-            db = get_db()
-            rows = db.execute(
-                "SELECT * FROM user WHERE username = ?", request.form.get("username"))
+            user = db.execute(
+                "SELECT * FROM user WHERE username = ?", (username,)).fetchone()
 
-            # Ensure username exists and password is correct
-            if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-                flash("invalid username and/or password")
-                return render_template("error.html")
+            # Ensure user already registered
+            if user == None:
+                flash("This username haven't been registered!")
+                return redirect("/register")
+            # Ensure username exists
+            if len(user) != 3:
+                flash("invalid username")
+                return render_template("login.html")
+            # Ensure password is correct
+            if check_password_hash(user["hash"], password) == False:
+                flash("invalid password")
+                return render_template("login.html")
 
             # Remember which user has logged in
-            session["user_id"] = rows[0]["id"]
+            session["user_id"] = user["id"]
             # Redirect user to home page
             return redirect("/")
 
@@ -129,6 +142,7 @@ def create_app(test_config=None):
         return redirect("/")
 
     @ app.route("/upload", methods=["GET", "POST"])
+    @login_required
     def uploadFiles():
         """Get the uploaded files from user"""
 

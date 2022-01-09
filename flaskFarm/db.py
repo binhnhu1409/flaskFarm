@@ -3,6 +3,7 @@ import sqlite3
 from flask import current_app
 from flask import g
 from flask.cli import with_appcontext
+import os
 
 
 def get_db():
@@ -28,10 +29,12 @@ def close_db(e=None):
 
 def init_db():
     """Clear existing data and create new tables."""
-    db = get_db()
 
-    with current_app.open_resource("schema.sql") as f:
-        db.executescript(f.read().decode("utf8"))
+    # check if the database file is exist
+    if not os.path.isfile(current_app.config["DATABASE"]):
+        db = get_db()
+        with current_app.open_resource("schema.sql") as f:
+            db.executescript(f.read().decode("utf8"))
 
 
 def init_app(app):
