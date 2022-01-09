@@ -1,8 +1,7 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for
 import pandas as pd
-
-from flaskFarm import get_db
+from flaskFarm import db
 
 
 def create_app(test_config=None):
@@ -20,8 +19,6 @@ def create_app(test_config=None):
     @app.route("/hello")
     def hello():
         return "Hello, World!"
-
-    from flaskFarm import db
 
     db.init_app(app)
 

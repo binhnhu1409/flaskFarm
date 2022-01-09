@@ -1,17 +1,13 @@
-<!DOCTYPE html>
+{% extends "layout.html" %}
 
-<html lang="en">
+{% block title %}
+FLASK CSV File Upload
+{% endblock %}
 
-<head>
-    <title>FLASK CSV File Upload</title>
-</head>
-
-<body>
-    <h1>Upload your CSV file</h1>
-    <form method="POST" action="" enctype="multipart/form-data">
-        <p><input type="file" name="file"></p>
-        <p><input type="submit" value="Submit"></p>
-    </form>
-</body>
-
-</html>
+{% block main %}
+<h1>Upload your CSV file</h1>
+<form method="POST" action="" enctype="multipart/form-data">
+    <p><input type="file" name="file"></p>
+    <p><input type="submit" value="Submit"></p>
+</form>
+{% endblock %}
