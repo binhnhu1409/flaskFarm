@@ -1,7 +1,11 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+
+from flask import Flask, render_template, request, redirect, session, flash
 import pandas as pd
+from werkzeug.security import check_password_hash, generate_password_hash
+
 from flaskFarm import db
+from flaskFarm.db import get_db
 
 
 def create_app(test_config=None):
@@ -20,16 +24,53 @@ def create_app(test_config=None):
     def hello():
         return "Hello, World!"
 
+    # Register database functions with the Flask app
     db.init_app(app)
 
     # get the database
     with app.app_context():
         db.init_db()
 
-    # Get the uploaded files
+    @app.route("/login", methods=["GET", "POST"])
+    def login():
+        """Log user in"""
 
-    @app.route("/upload", methods=["GET", "POST"])
+        # Forget any user_id
+        session.clear()
+        # User reached route via POST (as by submitting a form via POST)
+        if request.method == "POST":
+
+            # Ensure username was submitted
+            if not request.form.get("username"):
+                flash("You must provide username")
+                return render_template("error.html")
+            # Ensure password was submitted
+            elif not request.form.get("password"):
+                flash("You must provide password")
+                return render_template("error.html")
+
+            # Query database for username
+            db = get_db()
+            rows = db.execute(
+                "SELECT * FROM users WHERE username = ?", request.form.get("username"))
+
+            # Ensure username exists and password is correct
+            if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
+                flash("invalid username and/or password")
+                return render_template("error.html")
+
+            # Remember which user has logged in
+            session["user_id"] = rows[0]["id"
+            # Redirect user to home page
+            return redirect("/")
+
+        # User reached route via GET (as by clicking a link or via redirect)
+        else:
+            return render_template("login.html")
+
+    @ app.route("/upload", methods=["GET", "POST"])
     def uploadFiles():
+        """Get the uploaded files from user"""
 
         # get the uploaded file
         if request.method == "POST":
