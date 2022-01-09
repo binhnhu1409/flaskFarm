@@ -14,6 +14,7 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config["DATABASE"] = os.path.join(
         app.instance_path, "flaskFarm.sqlite")
+    app.config["SECRET_KEY"] = "nhu"
 
     # ensure the instance folder exists
     try:
@@ -45,20 +46,16 @@ def create_app(test_config=None):
         # form submitted via POST
         if request.method == "POST":
 
+            username = request.form.get("username")
+            password = request.form.get("password")
+            db = get_db()
             # Ensure user input a username:
-            if not request.form.get("username"):
+            if not username:
                 flash("missing username")
                 return render_template("error.html")
             # Ensure user input a password:
-            elif not request.form.get("password") or not request.form.get("confirmation"):
+            elif not password or not request.form.get("confirmation"):
                 flash("missing password")
-                return render_template("error.html")
-
-            # Ensure username doesn't exist in our database
-            userCheck = get_db().execute(
-                "SELECT * FROM users WHERE username = ?", request.form.get("username"))
-            if len(userCheck) != 0:
-                flash("sorry, this username already existed")
                 return render_template("error.html")
 
             # Ensure password is match with confirmation
@@ -67,10 +64,18 @@ def create_app(test_config=None):
                 return render_template("error.html")
 
             # Generate a hash of the password and add user to database
-            username = request.form.get("username")
-            password = generate_password_hash(request.form.get("password"))
-            get_db().execute("INSERT INTO user (username, hash) VALUES (?, ?)", username, password)
-            return redirect("/login")
+            userCheck = db.execute(
+                "SELECT * FROM user WHERE username = ?", (username,)).fetchone()
+            if userCheck == None or len(userCheck) == 0:
+                db.execute("INSERT INTO user (username, hash) VALUES (?, ?)",
+                           (username, generate_password_hash(password)),)
+                db.commit()
+                return redirect("/login")
+
+            # except the case username exist in our database
+            elif len(userCheck) != 0:
+                flash("sorry, this username already existed")
+                return render_template("error.html")
 
         # When request via GET, display registration form
         else:
@@ -97,7 +102,7 @@ def create_app(test_config=None):
             # Query database for username
             db = get_db()
             rows = db.execute(
-                "SELECT * FROM users WHERE username = ?", request.form.get("username"))
+                "SELECT * FROM user WHERE username = ?", request.form.get("username"))
 
             # Ensure username exists and password is correct
             if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
@@ -105,7 +110,7 @@ def create_app(test_config=None):
                 return render_template("error.html")
 
             # Remember which user has logged in
-            session["user_id"] = rows[0]["id"
+            session["user_id"] = rows[0]["id"]
             # Redirect user to home page
             return redirect("/")
 
