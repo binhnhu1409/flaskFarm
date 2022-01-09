@@ -31,6 +31,44 @@ def create_app(test_config=None):
     with app.app_context():
         db.init_db()
 
+    @app.route("/register", methods=["GET", "POST"])
+    def register():
+        """Register user"""
+
+        # form submitted via POST
+        if request.method == "POST":
+
+            # Ensure user input a username:
+            if not request.form.get("username"):
+                flash("missing username")
+                return render_template("error.html")
+            # Ensure user input a password:
+            elif not request.form.get("password") or not request.form.get("confirmation"):
+                flash("missing password")
+                return render_template("error.html")
+
+            # Ensure username doesn't exist in our database
+            userCheck = db.execute(
+                "SELECT * FROM users WHERE username = ?", request.form.get("username"))
+            if len(userCheck) != 0:
+                flash("sorry, this username already existed")
+                return render_template("error.html")
+
+            # Ensure password is match with confirmation
+            if request.form.get("password") != request.form.get("confirmation"):
+                flash("oops, password doesn't match")
+                return render_template("error.html")
+
+            # Generate a hash of the password and add user to database
+            username = request.form.get("username")
+            password = generate_password_hash(request.form.get("password"))
+            get_db().execute("INSERT INTO user (username, hash) VALUES (?, ?)", username, password)
+            return redirect("/login")
+
+        # When request via GET, display registration form
+        else:
+            return render_template("register.html")
+
     @app.route("/login", methods=["GET", "POST"])
     def login():
         """Log user in"""
@@ -74,10 +112,10 @@ def create_app(test_config=None):
 
         # get the uploaded file
         if request.method == "POST":
-            uploaded_file = request.files["file"]
+            uploaded_file= request.files["file"]
             # set the file path
             if uploaded_file.filename != '':
-                file_path = os.path.join(
+                file_path= os.path.join(
                     app.instance_path, uploaded_file.filename)
                 # save the file
                 uploaded_file.save(file_path)
@@ -91,9 +129,9 @@ def create_app(test_config=None):
 
     def parseCSV(filePath):
         # CVS Column Names
-        col_names = ["Farm name", "datetime", "metric type", "metric value"]
+        col_names= ["Farm name", "datetime", "metric type", "metric value"]
         # Use Pandas to parse the CSV file
-        csvData = pd.read_csv(filePath, names=col_names, header=None)
+        csvData= pd.read_csv(filePath, names=col_names, header=None)
         print(csvData)
 
     return app
