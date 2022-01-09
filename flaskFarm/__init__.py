@@ -4,8 +4,9 @@ from flask import Flask, render_template, request, redirect, session, flash
 import pandas as pd
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from flaskFarm import db
+from flaskFarm import db, utils
 from flaskFarm.db import get_db
+from flaskFarm.utils import login_required
 
 
 def create_app(test_config=None):
@@ -122,10 +123,10 @@ def create_app(test_config=None):
 
         # get the uploaded file
         if request.method == "POST":
-            uploaded_file = request.files["file"]
+            uploaded_file= request.files["file"]
             # set the file path
             if uploaded_file.filename != '':
-                file_path = os.path.join(
+                file_path= os.path.join(
                     app.instance_path, uploaded_file.filename)
                 # save the file
                 uploaded_file.save(file_path)
@@ -139,9 +140,9 @@ def create_app(test_config=None):
 
     def parseCSV(filePath):
         # CVS Column Names
-        col_names = ["Farm name", "datetime", "metric type", "metric value"]
+        col_names= ["Farm name", "datetime", "metric type", "metric value"]
         # Use Pandas to parse the CSV file
-        csvData = pd.read_csv(filePath, names=col_names, header=None)
+        csvData= pd.read_csv(filePath, names=col_names, header=None)
         print(csvData)
 
     return app
