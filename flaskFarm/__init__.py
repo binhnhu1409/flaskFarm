@@ -3,6 +3,7 @@ import os
 from flask import Flask, render_template, request, redirect, session, flash
 import pandas as pd
 from werkzeug.security import check_password_hash, generate_password_hash
+from datetime import datetime
 
 from flaskFarm import db, utils
 from flaskFarm.db import get_db
@@ -167,7 +168,7 @@ def create_app(test_config=None):
         # CVS Column Names
         col_names = ["Farm_name", "datetime", "metric_type", "metric_value"]
         # Use Pandas to parse the CSV file
-        csvData = pd.read_csv(filePath, names=col_names, header=None)
+        csvData = pd.read_csv(filePath, names=col_names, header=1)
         print(csvData)
 
         # get current user_id to query more information
@@ -183,13 +184,23 @@ def create_app(test_config=None):
         print('user table:', user_table)
         if user_table == None:
             db.execute('''CREATE TABLE {} (
-                       Farm_name TEXT NOT NULL,
+                       Farm_name TEXT,
                        datetime DATETIME,
-                       metric_type TEXT NOT NULL, 
-                       metric_value NUMERIC NOT NULL)'''.format(username,))
+                       metric_type TEXT,
+                       metric_value NUMERIC)'''.format(username,))
             db.commit()
 
-        else:
+        # loops through the row of csvData
+        for _, row in csvData.iterrows():
+            print('Farm name :', row['Farm_name'], type(row['Farm_name']))
+            print('datetime :', row['datetime'])
+            print('metric type:', row['metric_type'])
+            print('metric value :', row['metric_value'])
 
-            db.execute()
+            add_to_table = "INSERT INTO {} (Farm_name, datetime, metric_type, metric_Value) VALUES ('{}', {}, {}, {})".format(
+                username, row['Farm_name'], row['datetime'], row['metric_type'], row['metric_value'])
+            print('add to table:', add_to_table)
+            db.execute(add_to_table)
+            db.commit()
+
     return app
