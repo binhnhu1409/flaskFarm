@@ -185,20 +185,27 @@ def create_app(test_config=None):
         if user_table == None:
             db.execute('''CREATE TABLE {} (
                        Farm_name TEXT,
-                       datetime DATETIME,
+                       date NUMERIC,
+                       month NUMERIC,
+                       year NUMERIC,
                        metric_type TEXT,
                        metric_value NUMERIC)'''.format(username,))
             db.commit()
 
         # loops through the row of csvData
         for _, row in csvData.iterrows():
-            print('Farm name :', row['Farm_name'], type(row['Farm_name']))
-            print('datetime :', row['datetime'])
-            print('metric type:', row['metric_type'])
-            print('metric value :', row['metric_value'])
 
-            add_to_table = "INSERT INTO {} (Farm_name, datetime, metric_type, metric_Value) VALUES ('{}', {}, {}, {})".format(
-                username, row['Farm_name'], row['datetime'], row['metric_type'], row['metric_value'])
+            # parsing datetime data into 3 specific columns: date, month, year
+            # for better query later
+            time_value = datetime.strptime(
+                row['datetime'], '%Y-%m-%dT%H:%M:%S.%fZ')
+            day = time_value.date().day
+            month = time_value.date().month
+            year = time_value.date().year
+
+            # add data into existing table row by row
+            add_to_table = "INSERT INTO {} (Farm_name, date, month, year, metric_type, metric_Value) VALUES ('{}', {}, {}, {}, '{}', {})".format(
+                username, row['Farm_name'], day, month, year, row['metric_type'], row['metric_value'])
             print('add to table:', add_to_table)
             db.execute(add_to_table)
             db.commit()
