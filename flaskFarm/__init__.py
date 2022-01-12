@@ -2,6 +2,7 @@ import os
 
 from flask import Flask, render_template, request, redirect, session, flash
 import pandas as pd
+import numpy as np
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 
@@ -164,11 +165,36 @@ def create_app(test_config=None):
         else:
             return render_template('upload.html')
 
+    def validation_data(row):
+        """Validate row from db. Row is a pandas.Series of weather, location data"""
+
+        # Validation rules (dict)
+        rules = {'metric_type': ['pH', 'temperature', 'rainFall'], 'pH': [
+            0, 14], 'temperature': [-50, 100], 'rainFall': [0, 500], }
+
+        # Validate mising date in datetime row
+        if not row['datetime']:
+            return None
+        # Validate valid metric types: only accept pH, temperature, rainFall
+        metric_type = row['metric_type']
+        if not metric_type in rules['metric_type']:
+            return None
+        # Validate value of metric type: pH in [0,14], temp [-50, 100], rainfall [0,500]
+        metric_value = row['metric_value']
+        if metric_value < rules.get(metric_type)[0] or metric_value > rules.get(metric_type)[1]:
+            return None
+        # Validate metric value is not NULL
+        if np.isnan(metric_value) == True:
+            return None
+
+        # if row follows validation rules
+        return row
+
     def parseCSV(filePath):
         # CVS Column Names
         col_names = ["Farm_name", "datetime", "metric_type", "metric_value"]
         # Use Pandas to parse the CSV file
-        csvData = pd.read_csv(filePath, names=col_names, header=1)
+        csvData = pd.read_csv(filePath, names=col_names, header=0)
         print(csvData)
 
         # get current user_id to query more information
@@ -195,6 +221,10 @@ def create_app(test_config=None):
         # loops through the row of csvData
         for _, row in csvData.iterrows():
 
+            row = validation_data(row)
+            if row is None:
+                continue
+
             # parsing datetime data into 3 specific columns: date, month, year
             # for better query later
             time_value = datetime.strptime(
@@ -204,9 +234,10 @@ def create_app(test_config=None):
             year = time_value.date().year
 
             # add data into existing table row by row
-            add_to_table = "INSERT INTO {} (Farm_name, date, month, year, metric_type, metric_Value) VALUES ('{}', {}, {}, {}, '{}', {})".format(
+            add_to_table = '''INSERT INTO {} (Farm_name, date, month, year, metric_type, metric_Value) VALUES ("{}", {}, {}, {}, "{}", {})'''.format(
                 username, row['Farm_name'], day, month, year, row['metric_type'], row['metric_value'])
-            print('add to table:', add_to_table)
+            print('add_table: ', add_to_table)
+
             db.execute(add_to_table)
             db.commit()
 
