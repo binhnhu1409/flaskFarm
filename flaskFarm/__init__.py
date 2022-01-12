@@ -195,7 +195,6 @@ def create_app(test_config=None):
         col_names = ["Farm_name", "datetime", "metric_type", "metric_value"]
         # Use Pandas to parse the CSV file
         csvData = pd.read_csv(filePath, names=col_names, header=0)
-        print(csvData)
 
         # get current user_id to query more information
         db = get_db()
@@ -207,7 +206,6 @@ def create_app(test_config=None):
         # Check if user have their table yet?
         user_table = db.execute(
             "SELECT name FROM sqlite_master WHERE type='table' AND name=?", (username,)).fetchone()
-        print('user table:', user_table)
         if user_table == None:
             db.execute('''CREATE TABLE {} (
                        Farm_name TEXT,
@@ -236,8 +234,6 @@ def create_app(test_config=None):
             # add data into existing table row by row
             add_to_table = '''INSERT INTO {} (Farm_name, date, month, year, metric_type, metric_Value) VALUES ("{}", {}, {}, {}, "{}", {})'''.format(
                 username, row['Farm_name'], day, month, year, row['metric_type'], row['metric_value'])
-            print('add_table: ', add_to_table)
-
             db.execute(add_to_table)
             db.commit()
 
