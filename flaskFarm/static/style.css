@@ -1,18 +1,49 @@
-/* Size for brand */
-nav .navbar-brand
-{
-    font-size: xx-large;
+
+body {
+    background: url(background.jpg) no-repeat;
+    background-position: center;
+    border-radius: 0!important;
+    height: 800px;
 }
 
-/* Colors for brand */
-nav .navbar-brand .yellow
-{
-    color: #f5b82e;
+
+
+/* Decoration for brand and navigation */
+nav .navbar-brand .yellow{
+    color: #EEAA0B;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 39px;
 }
-nav .navbar-brand .green
-{
+nav .navbar-brand .green{
     color: #2e944b;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: 39px;
 }
+
+
+/* Decoration for header in all size device*/
+.catchphrase {
+    color: #146356;
+    font-family: Titillium Web;
+    font-weight: 600;
+    font-size: 80px;
+}
+@media only screen and (max-width: 768px) {
+    .catchphrase{
+        font-size: 52px;
+        margin-top: 48px;
+    }
+}
+
+
+
+
+
+
+canvas{
+    background-color: white;
+}
+
 
 table {
     margin-bottom: 1rem;
