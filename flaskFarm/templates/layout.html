@@ -3,7 +3,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, width=device-width">
 
@@ -18,6 +17,7 @@
 
     <!-- Web font Styles -->
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Titillium Web' />
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto' />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 
     <!-- Custom Styles -->
@@ -31,24 +31,25 @@
 
     <nav class="border navbar navbar-expand-md navbar-light">
         <div class="container-fluid">
-            <a class="navbar-brand text-left" href="/"> <span class="yellow">Flask</span><span class="green">Farm</span>
+            <a class="navbar-brand text-left" href="/"> <span class="yellow">Flask</span><span
+                    class="green">Farm.</span>
             </a>
             <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
                 data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbar">
+            <div class="collapse navbar-collapse nav-decor" id="navbar">
                 {% if session["user_id"] %}
-                <ul class="navbar-nav me-auto mt-2">
+                <ul class="navbar-nav me-auto mt-3">
                     <li class="nav-item"><a class="nav-link" href="/visualize">Visualization</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/upload">Upload</a></li>
                 </ul>
-                <ul class="navbar-nav ms-auto mt-2">
+                <ul class="navbar-nav ms-auto mt-3">
+                    <li class="nav-item"><a class="nav-link" href="/upload">Upload</a></li>
                     <li class="nav-item"><a class="nav-link" href="/changepass">Change Password</a></li>
                     <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
                 </ul>
                 {% else %}
-                <ul class="navbar-nav ms-auto mt-2">
+                <ul class="navbar-nav ms-auto mt-3">
                     <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
                     <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
                 </ul>

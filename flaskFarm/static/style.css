@@ -1,11 +1,10 @@
-
+/* General */
 body {
     background: url(background.jpg) no-repeat;
     background-position: center;
     border-radius: 0!important;
     height: 800px;
 }
-
 
 
 /* Decoration for brand and navigation */
@@ -18,6 +17,17 @@ nav .navbar-brand .green{
     color: #2e944b;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     font-size: 39px;
+}
+a.nav-link{
+    font-family: Roboto!important;
+    font-size: 18px;
+    margin: 0 6px 0 6px;
+}
+a.nav-link:hover{
+    background-color: #519259;
+    border-radius: 5%;
+    opacity: 0.6;
+    color: white!important;
 }
 
 
@@ -36,7 +46,18 @@ nav .navbar-brand .green{
 }
 
 
-
+/* All kind of form */
+input:focus,
+button:focus {
+    box-shadow: 0 0 2px 3px #519259 !important;
+}
+button {
+    background-color: #146356!important;
+    border: #146356 !important;
+}
+button:hover {
+    border: solid #EEAA0B !important;
+}
 
 
 
