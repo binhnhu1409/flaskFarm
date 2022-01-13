@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Graph
+{% endblock %}
+
+{% block main %}
+<div>
+    <canvas id="canvas" height="100"></canvas>
+</div>
+<script>
+    const data = {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [{
+            label: '2018',
+            data: [[-13.9, -2], [-8.8, 0], [-8, 1], [-7, 3], [-2, 8], [10, 20], [13, 25], [15, 25], [10, 20], [5, 17], [-4, 7], [-10, 0]],
+            backgroundColor: 'lightgreen'
+        },
+        {
+            label: '2019',
+            data: [[-13.9, -2], [-8.8, 0], [-8, 1], [-7, 3], [-2, 8], [10, 20], [13, 25], [15, 25], [10, 20], [5, 17], [-4, 7], [-10, 0]],
+            backgroundColor: 'lightblue'
+        }]
+    }
+
+    window.onload = function () {
+        var ctx = document.getElementById('canvas').getContext('2d');
+        window.myBar = new Chart(ctx, {
+            type: 'bar',
+            data: data,
+            options: {
+                responsive: true,
+                legend: {
+                    position: 'bottom',
+                },
+                title: {
+                    display: true,
+                    text: 'Temperature'
+                }
+            }
+        });
+    };
+</script>
+{% endblock %}
