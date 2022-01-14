@@ -40,12 +40,9 @@
             </button>
             <div class="collapse navbar-collapse nav-decor" id="navbar">
                 {% if session["user_id"] %}
-                <ul class="navbar-nav me-auto mt-3">
-                    <li class="nav-item"><a class="nav-link" href="/visualize">Visualization</a></li>
-                </ul>
                 <ul class="navbar-nav ms-auto mt-3">
+                    <li class="nav-item"><a class="nav-link" href="/visualize">Visualization</a></li>
                     <li class="nav-item"><a class="nav-link" href="/upload">Upload</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/changepass">Change Password</a></li>
                     <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
                 </ul>
                 {% else %}

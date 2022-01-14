@@ -6,9 +6,30 @@ Graph
 
 
 {% block main %}
-<div>
-    <canvas id="canvas" height="100"></canvas>
+
+<div class="row ">
+
+    <!-- metric option -->
+    <div class="col-lg-3 col-md-3 col-sm-12">
+        <button class="metric-card rain"><img src="../static/rainfall.png" alt="rainfall" type="submit" height="50px">
+            rainFall</button>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-12">
+        <button class="metric-card temp"><img src="../static/temp.png" alt="rainfall" type="submit" height="80px">
+            Temperature</button>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-12">
+        <button class="metric-card ph"><img src="../static/pH.png" alt="rainfall" type="submit" height="50px">
+            pH</button>
+    </div>
+
+    <!-- graph placeholder -->
+    <div class="col-lg-9 col-md-12 col-sm-12 ">
+        <canvas id="canvas" class="mt-3"></canvas>
+    </div>
+
 </div>
+
 <script>
     const data = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],

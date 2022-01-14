@@ -5,9 +5,11 @@ FLASK CSV File Upload
 {% endblock %}
 
 {% block main %}
-<h1>Upload your CSV file</h1>
-<form method="POST" action="" enctype="multipart/form-data">
-    <p><input type="file" name="file"></p>
-    <p><input type="submit" value="Submit"></p>
-</form>
+<div class=" mx-auto">
+    <form method="POST" action="/upload" enctype="multipart/form-data">
+        <p><input type="file" class="myBtn" name="file"></p>
+        <p><input type="submit" class="myBtn" value="Upload your CSV file"></p>
+    </form>
+</div>
+
 {% endblock %}
