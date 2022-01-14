@@ -6,9 +6,7 @@ Graph
 
 
 {% block main %}
-
 <div class="row ">
-
     <!-- metric option -->
     <div class="col-lg-3 col-md-3 col-sm-12">
         <button class="metric-card rain"><img src="../static/rainfall.png" alt="rainfall" type="submit" height="50px">
@@ -27,22 +25,31 @@ Graph
     <div class="col-lg-9 col-md-12 col-sm-12 ">
         <canvas id="canvas" class="mt-3"></canvas>
     </div>
-
 </div>
 
 <script>
+
+    let yearly_data;
+
+    fetch('http://127.0.0.1:5000/demographdata')
+        .then(res => res.json())
+        .then((out) => {
+            console.log('Output: ', out);
+            yearly_data = out;
+        }).catch(err => console.error(err));
+
     const data = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        datasets: [{
-            label: '2018',
-            data: [[-13.9, -2], [-8.8, 0], [-8, 1], [-7, 3], [-2, 8], [10, 20], [13, 25], [15, 25], [10, 20], [5, 17], [-4, 7], [-10, 0]],
-            backgroundColor: 'lightgreen'
-        },
-        {
-            label: '2019',
-            data: [[-13.9, -2], [-8.8, 0], [-8, 1], [-7, 3], [-2, 8], [10, 20], [13, 25], [15, 25], [10, 20], [5, 17], [-4, 7], [-10, 0]],
-            backgroundColor: 'lightblue'
-        }]
+        labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+        datasets: [] // {'data':..., 'label':...}
+    }
+
+    years = Object.keys(yearly_data)
+    colors = ['lightblue', 'lightgreen']
+    for (let year in yearly_data) {
+        metric_value = Object.values(yearly_data[year])
+        data["datasets"].push({ data: metric_value, label: year, backgroundColor: colors.pop() })
+        console.log(metric_value)
+        console.log(year)
     }
 
     window.onload = function () {

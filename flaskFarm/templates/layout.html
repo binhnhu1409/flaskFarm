@@ -56,12 +56,12 @@
     </nav>
 
     <header class="container-fluid">
-        {% block header %}{% endblock %}
         {% if get_flashed_messages() %}
         <div class="alert alert-info mb-0 text-center" role="alert">
             {{ get_flashed_messages() | join(" ") }}
         </div>
         {% endif %}
+        {% block header %}{% endblock %}
     </header>
 
     <main class="container-fluid py-5 text-center">

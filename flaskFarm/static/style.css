@@ -89,7 +89,7 @@ button:hover {
     width: 330px;
 }
 button.metric-card:hover {
-    color: white!important;
+    color: black!important;
     border: none!important;
 }
 button.metric-card:focus {

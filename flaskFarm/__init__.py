@@ -159,6 +159,7 @@ def create_app(test_config=None):
                 uploaded_file.save(file_path)
                 parseCSV(file_path)
                 print('file path is:', file_path)
+            flash("Successfully upload")
             return redirect("/")
 
         # when request via GET, display form to upload a file
@@ -261,5 +262,13 @@ def create_app(test_config=None):
     def graph():
 
         return render_template("graph.html")
+
+    @ app.route("/demographdata")
+    def demograpdata():
+        yearly_data = {
+            2018: {'Jan': [-13.9, -2], 'Feb': [-8.8, 0], 'Mar': [-8, 1], 'Apr': [-7, 3]},
+            2019: {'Jan': [-1, 5], 'Feb': [-8.8, 4], 'Mar': [-5, 1], 'Apr': [-1, 10]}
+        }
+        return jsonify(yearly_data)
 
     return app
