@@ -110,6 +110,19 @@ button.metric-card:focus {
 /* end Visualization page */
 
 
+/* Upload page */
+.background {
+    background-color: white;
+    opacity: 0.95;
+    width: fit-content;
+    border-radius: 0.3em;
+    padding: 5px;
+    font-family: Roboto;
+    color: #146356;
+}
+
+
+
 /* table */
 table {
     margin-bottom: 1rem;

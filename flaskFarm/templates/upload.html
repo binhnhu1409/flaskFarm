@@ -4,11 +4,27 @@
 FLASK CSV File Upload
 {% endblock %}
 
-{% block header %}
-
-{% endblock %}
-
 {% block main %}
+<!-- mention about requirement for uploading file -->
+<div class="text-start mb-3 background mx-auto">
+    <p class="fst-italic fw-bold">Please update your CSV file following these conditions:</p>
+    <hr>
+    <ul>
+        <li>Your file, as mention above, should be a CSV file</li>
+        <li>Data format of the file should be [Farm name], [datetime], [metric type], [metric value]</li>
+        <ul>
+            <li>Example: PartialTech Research Farm,2018-12-31T22:00:00.000Z,rainFall,1.4 </li>
+            <li>Currently, we only support a farm for each user meaning your [Farm name] should be the same until
+                further notice</li>
+            <li>[metric type] can be anything, however, we currently only visualize temperature, rainfall and pH</li>
+        </ul>
+    </ul>
+    <hr>
+    <p class="fw-bold">Don't panic if our page is showing nothing after uploading. It might take a while if your data is
+        big. There will be a message after a successful uploading</p>
+</div>
+
+<!-- a form for user upload file -->
 <div class=" mx-auto">
     <form method="POST" action="/upload" enctype="multipart/form-data">
         <p><input type="file" class="myBtn" name="file"></p>
