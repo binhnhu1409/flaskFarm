@@ -1,4 +1,5 @@
 import os
+from tkinter import Y
 
 from flask import Flask, render_template, request, redirect, session, flash, jsonify
 import pandas as pd
@@ -151,6 +152,12 @@ def create_app(test_config=None):
         # get the uploaded file
         if request.method == "POST":
             uploaded_file = request.files["file"]
+
+            # ensure user uploaded file
+            if not uploaded_file:
+                flash("You need to choose a file to upload")
+                return redirect("/upload")
+
             # set the file path
             if uploaded_file.filename != '':
                 file_path = os.path.join(
@@ -258,23 +265,71 @@ def create_app(test_config=None):
                      'year': 2018, 'metric_type': 'temperature', 'metric_value': -13.9}]
         return jsonify(demoData)
 
-    @ app.route("/demograph")
+    @ app.route("/visualize")
+    @login_required
     def graph():
+        """Showing user visualization page"""
 
         return render_template("graph.html")
 
     @ app.route("/temperature")
     @login_required
     def temperatureData():
-        yearly_data = {
-            2018: {'Jan': [-13.9, -2], 'Feb': [-8.8, 0], 'Mar': [-8, 1], 'Apr': [-7, 3]},
-            2019: {'Jan': [-1, 5], 'Feb': [-8.8, 4], 'Mar': [-5, 1], 'Apr': [-1, 10]}
-        }
+        """Query temperature data from user database, assuming user database only have 1 farm"""
+
+        # connect db to query more information
+        db = get_db()
+
+        # get current user_id
+        user_id = session.get("user_id")
+        # from user_id get username to access user table, which is also username
+        user = db.execute(
+            "SELECT * FROM user WHERE id = ?", (user_id,)).fetchone()
+        username = user["username"]
+
+        # Query year from user database
+        years = db.execute(
+            '''SELECT DISTINCT year FROM {} '''.format(username,)).fetchone()
+        print("year:", years, type(years))
+
+        # initial empty dict
+        yearly_data = {}
+        # loop through the year to get all min, max value by month
+        # valuesByMonth is a list, can access month by valuesByMonth[0]["month"]
+        # valuesByMonth[i]["MIN(metric_value)"]
+        for year in years:
+
+            yearly_data[year] = {}
+            yearly_data_append = {}
+            valuesByMonth = db.execute(
+                '''SELECT month, MIN(metric_value), MAX(metric_value)
+                FROM {}
+                WHERE metric_type = 'temperature' AND year = {} 
+                GROUP BY month
+                ORDER BY month'''.format(username, year)).fetchall()
+
+            for i in range(len(valuesByMonth)):
+                month = valuesByMonth[i]["month"]
+                min_value = valuesByMonth[i]["MIN(metric_value)"]
+                max_value = valuesByMonth[i]["MAX(metric_value)"]
+                print('month:', valuesByMonth[i]["month"])
+                print('min:', valuesByMonth[i]["MIN(metric_value)"])
+                print('max:', valuesByMonth[i]["MAX(metric_value)"])
+                yearly_data_append = {month: [min_value, max_value]}
+
+            yearly_data[year] = yearly_data_append
+
+            #yearly_data = {year: {month: [min_value, max_value]}}
+
+        print(yearly_data)
+
         return jsonify(yearly_data)
 
     @ app.route("/ph")
     @login_required
     def phData():
+        """Query pH data from user database, assuming user database only have 1 farm"""
+
         yearly_data = {
             2018: {'Jan': [0, 2], 'Feb': [2, 3], 'Mar': [2, 5], 'Apr': [4, 8]},
             2019: {'Jan': [0, 4], 'Feb': [2, 6], 'Mar': [8, 10], 'Apr': [5, 10]}
@@ -284,6 +339,8 @@ def create_app(test_config=None):
     @ app.route("/rainfall")
     @login_required
     def rainfallData():
+        """Query rainFall data from user database, assuming user database only have 1 farm"""
+
         yearly_data = {
             2018: {'Jan': [0, 0], 'Feb': [100, 500], 'Mar': [400, 500], 'Apr': [200, 300]},
             2019: {'Jan': [0, 50], 'Feb': [40, 150], 'Mar': [200, 300], 'Apr': [100, 400]}
