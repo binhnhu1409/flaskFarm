@@ -263,11 +263,30 @@ def create_app(test_config=None):
 
         return render_template("graph.html")
 
-    @ app.route("/demographdata")
-    def demograpdata():
+    @ app.route("/temperature")
+    @login_required
+    def temperatureData():
         yearly_data = {
             2018: {'Jan': [-13.9, -2], 'Feb': [-8.8, 0], 'Mar': [-8, 1], 'Apr': [-7, 3]},
             2019: {'Jan': [-1, 5], 'Feb': [-8.8, 4], 'Mar': [-5, 1], 'Apr': [-1, 10]}
+        }
+        return jsonify(yearly_data)
+
+    @ app.route("/ph")
+    @login_required
+    def phData():
+        yearly_data = {
+            2018: {'Jan': [0, 2], 'Feb': [2, 3], 'Mar': [2, 5], 'Apr': [4, 8]},
+            2019: {'Jan': [0, 4], 'Feb': [2, 6], 'Mar': [8, 10], 'Apr': [5, 10]}
+        }
+        return jsonify(yearly_data)
+
+    @ app.route("/rainfall")
+    @login_required
+    def rainfallData():
+        yearly_data = {
+            2018: {'Jan': [0, 0], 'Feb': [100, 500], 'Mar': [400, 500], 'Apr': [200, 300]},
+            2019: {'Jan': [0, 50], 'Feb': [40, 150], 'Mar': [200, 300], 'Apr': [100, 400]}
         }
         return jsonify(yearly_data)
 
