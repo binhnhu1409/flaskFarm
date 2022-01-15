@@ -30,12 +30,23 @@ Graph
 </div>
 
 <script>
-    const months = ['Jan', 'Feb', 'Mar', 'Apr'];
-    var colors = ['lightblue', 'lightgreen', 'pink'];
 
-    // for "global" access
+    // variable for "global" access
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const colors = ['#064635', '#519259', '#F0BB62', '#DB6B97', '#A6CF98', '#A2CDCD', '#7FC8A9', '#444941', '#19456B', '#FF9A8C',
+        '#335D2D', '#CBEAED', '#C4FB6D', '#ABC2E8', '#D9D7F1', '#FFBABA', '#FF5D6C', '#F7C5A8', '#A9C6DE', '#E4C666', '#CA965C',
+        '#FF6363', '#C3BA85', '#79A3B1', '#A8DDA8', '#FFBB91', '#BAC964', '#F7D08A'];
     var myBarChart = null;
 
+
+    // function get random color
+    function getColor() {
+        const randomIndex = Math.floor(Math.random() * colors.length);
+        var randomCorlor = colors[randomIndex];
+        return randomCorlor;
+    }
+
+    // create bar chart 
     function createBarChart() {
         let ctx = document.getElementById('canvas').getContext('2d');
         let typeChart = 'bar';
@@ -54,48 +65,71 @@ Graph
                 },
                 title: {
                     display: true,
-                    text: myTitle
+                    text: ''
                 }
             }
         });
     }
 
-    function addData(chart, title, data) {
-        chart.options.title.text = title;
-        chart.data.datasets.forEach((dataset, i) => {
-            dataset.data = data;
-        });
-        chart.update();
+    // update data to myBarChart datasets
+    function updateData(yearly_data) {
+        removeData(myBarChart);
+        years = Object.keys(yearly_data);
+        for (let year in yearly_data) {
+            metric_value = Object.values(yearly_data[year]);
+            myBarChart.data.datasets.push({ data: metric_value, label: year, backgroundColor: getColor() });
+            console.log(metric_value)
+            console.log(year)
+        }
+        myBarChart.update();
     }
 
+    // Remove data from 'old' myBarChart datasets to update the new ones
     function removeData(myChart) {
         console.log('removeData', myChart);
         if (myChart.data.datasets.length > 0) {
-            myChart.data.datasets.forEach((dataset) => {
-                dataset.data.pop();
-            });
-            chart.update();
+            myChart.data.datasets = [];
+            myChart.update();
         }
     }
 
+    // Create myBarChart when loading window
     window.onload = function () {
         createBarChart();
     };
+
+    // Get data from API according to button being clicked
+    // 3 button for 3 metric_type: pH, temperature, rainfall
+    // Temperature
     document.getElementById("Temperature").onclick = function () {
-        fetch('http://127.0.0.1:5000/demographdata')
+        fetch('http://127.0.0.1:5000/temperature')
             .then(res => res.json())
             .then((out) => {
                 console.log('Output: ', out);
-                removeData(myBarChart);
-                years = Object.keys(out);
-                for (let year in out) {
-                    metric_value = Object.values(out[year]);
-                    myBarChart.data.datasets.push({ data: metric_value, label: year, backgroundColor: colors.pop() });
-                    console.log(metric_value)
-                    console.log(year)
-                }
-                myBarChart.update();
+                myBarChart.options.title.text = 'Temperature bar chart';
+                updateData(out);
             }).catch(err => console.error(err));
     };
+    // pH
+    document.getElementById("pH").onclick = function () {
+        fetch('http://127.0.0.1:5000/ph')
+            .then(res => res.json())
+            .then((out) => {
+                console.log('Output: ', out);
+                myBarChart.options.title.text = 'pH bar chart';
+                updateData(out);
+            }).catch(err => console.error(err));
+    };
+    // rainFall
+    document.getElementById("rainFall").onclick = function () {
+        fetch('http://127.0.0.1:5000/rainfall')
+            .then(res => res.json())
+            .then((out) => {
+                console.log('Output: ', out);
+                myBarChart.options.title.text = 'Rain fall bar chart';
+                updateData(out);
+            }).catch(err => console.error(err));
+    };
+
 </script>
 {% endblock %}

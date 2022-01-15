@@ -1,4 +1,5 @@
 import os
+from tkinter import Y
 
 from flask import Flask, render_template, request, redirect, session, flash, jsonify
 import pandas as pd
@@ -151,6 +152,12 @@ def create_app(test_config=None):
         # get the uploaded file
         if request.method == "POST":
             uploaded_file = request.files["file"]
+
+            # ensure user uploaded file
+            if not uploaded_file:
+                flash("You need to choose a file to upload")
+                return redirect("/upload")
+
             # set the file path
             if uploaded_file.filename != '':
                 file_path = os.path.join(
@@ -238,37 +245,82 @@ def create_app(test_config=None):
             db.execute(add_to_table)
             db.commit()
 
-    @ app.route("/demoapi")
-    def demo():
-        demoData = [{'Farm_name': 'Friman Metsola collective', 'date': 31, 'month': 12,
-                     'year': 2018, 'metric_type': 'pH', 'metric_value': 6.52},
-                    {'Farm_name': 'Friman Metsola collective', 'date': 31, 'month': 12,
-                     'year': 2018, 'metric_type': 'rainFall', 'metric_value': 2.6},
-                    {'Farm_name': 'Friman Metsola collective', 'date': 1, 'month': 1,
-                     'year': 2019, 'metric_type': 'temperature', 'metric_value': -9},
-                    {'Farm_name': 'Friman Metsola collective', 'date': 1, 'month': 1,
-                     'year': 2019, 'metric_type': 'temperature', 'metric_value': -12.2},
-                    {'Farm_name': 'Friman Metsola collective', 'date': 1, 'month': 1,
-                     'year': 2019, 'metric_type': 'temperature', 'metric_value': -8.9},
-                    {'Farm_name': 'Friman Metsola collective', 'date': 1, 'month': 1,
-                     'year': 2019, 'metric_type': 'temperature', 'metric_value': -8.6},
-                    {'Farm_name': 'Friman Metsola collective', 'date': 1, 'month': 1,
-                     'year': 2019, 'metric_type': 'temperature', 'metric_value': -8.4},
-                    {'Farm_name': 'Friman Metsola collective', 'date': 31, 'month': 12,
-                     'year': 2018, 'metric_type': 'temperature', 'metric_value': -13.9}]
-        return jsonify(demoData)
-
-    @ app.route("/demograph")
+    @ app.route("/visualize")
+    @login_required
     def graph():
+        """Showing user visualization page"""
 
         return render_template("graph.html")
 
-    @ app.route("/demographdata")
-    def demograpdata():
-        yearly_data = {
-            2018: {'Jan': [-13.9, -2], 'Feb': [-8.8, 0], 'Mar': [-8, 1], 'Apr': [-7, 3]},
-            2019: {'Jan': [-1, 5], 'Feb': [-8.8, 4], 'Mar': [-5, 1], 'Apr': [-1, 10]}
-        }
+    def queryMetricValueByTime(metric_type):
+        """Query metric value by time, assuming user database only have 1 farm"""
+
+        # initial empty dict
+        yearly_data = {}
+
+        # connect db to query more information
+        db = get_db()
+
+        # get current user_id
+        user_id = session.get("user_id")
+        # from user_id get username to access user table, which is also username
+        user = db.execute("SELECT * FROM user WHERE id = ?",
+                          (user_id,)).fetchone()
+        username = user["username"]
+
+        # Query year from user database
+        years = db.execute(
+            '''SELECT DISTINCT year FROM {} '''.format(username,)).fetchall()
+
+        # loop through the year to get all min, max value by month
+        for year in years:
+
+            # initial empty dict
+            yearly_data[year["year"]] = {}
+            yearly_data_append = {}
+
+            # query to get month, min, max metric value
+            query = '''SELECT month, MIN(metric_value), MAX(metric_value)
+                FROM {}
+                WHERE metric_type = '{}' AND year = {} 
+                GROUP BY month
+                ORDER BY month'''.format(username, metric_type, year["year"])
+            valuesByMonth = db.execute(query).fetchall()
+
+            # loop through get all min, max value by month to the existing dict
+            for i in range(len(valuesByMonth)):
+                month = valuesByMonth[i]["month"]
+                min_value = valuesByMonth[i]["MIN(metric_value)"]
+                max_value = valuesByMonth[i]["MAX(metric_value)"]
+                yearly_data_append[month] = [min_value, max_value]
+
+            # append all values to a year
+            yearly_data[year["year"]] = yearly_data_append
+
+        return yearly_data
+
+    @ app.route("/temperature")
+    @login_required
+    def temperatureData():
+        """Query temperature data from user database"""
+
+        yearly_data = queryMetricValueByTime('temperature')
+        return jsonify(yearly_data)
+
+    @ app.route("/ph")
+    @login_required
+    def phData():
+        """Query pH data from user database"""
+
+        yearly_data = queryMetricValueByTime('pH')
+        return jsonify(yearly_data)
+
+    @ app.route("/rainfall")
+    @login_required
+    def rainfallData():
+        """Query rainFall data from user database"""
+
+        yearly_data = queryMetricValueByTime('rainFall')
         return jsonify(yearly_data)
 
     return app
