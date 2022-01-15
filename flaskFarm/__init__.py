@@ -283,14 +283,14 @@ def create_app(test_config=None):
         # get current user_id
         user_id = session.get("user_id")
         # from user_id get username to access user table, which is also username
-        user = db.execute(
-            "SELECT * FROM user WHERE id = ?", (user_id,)).fetchone()
+        user = db.execute("SELECT * FROM user WHERE id = ?",
+                          (user_id,)).fetchone()
         username = user["username"]
+        print('username:', username, type(username))
 
         # Query year from user database
         years = db.execute(
-            '''SELECT DISTINCT year FROM {} '''.format(username,)).fetchone()
-        print("year:", years, type(years))
+            '''SELECT DISTINCT year FROM {} '''.format(username,)).fetchall()
 
         # initial empty dict
         yearly_data = {}
@@ -299,14 +299,17 @@ def create_app(test_config=None):
         # valuesByMonth[i]["MIN(metric_value)"]
         for year in years:
 
-            yearly_data[year] = {}
+            yearly_data[year["year"]] = {}
             yearly_data_append = {}
-            valuesByMonth = db.execute(
-                '''SELECT month, MIN(metric_value), MAX(metric_value)
+            query = '''SELECT month, MIN(metric_value), MAX(metric_value)
                 FROM {}
                 WHERE metric_type = 'temperature' AND year = {} 
                 GROUP BY month
-                ORDER BY month'''.format(username, year)).fetchall()
+                ORDER BY month'''.format(username, year["year"])
+            print("query", query)
+            valuesByMonth = db.execute(query).fetchall()
+
+            print('valuebymonth:', valuesByMonth, type(valuesByMonth))
 
             for i in range(len(valuesByMonth)):
                 month = valuesByMonth[i]["month"]
@@ -315,9 +318,9 @@ def create_app(test_config=None):
                 print('month:', valuesByMonth[i]["month"])
                 print('min:', valuesByMonth[i]["MIN(metric_value)"])
                 print('max:', valuesByMonth[i]["MAX(metric_value)"])
-                yearly_data_append = {month: [min_value, max_value]}
+                yearly_data_append[month] = [min_value, max_value]
 
-            yearly_data[year] = yearly_data_append
+            yearly_data[year["year"]] = yearly_data_append
 
             #yearly_data = {year: {month: [min_value, max_value]}}
 
