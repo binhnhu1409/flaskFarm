@@ -1,19 +1,116 @@
-/* Size for brand */
-nav .navbar-brand
-{
-    font-size: xx-large;
+/* General */
+body {
+    background: url(background.jpg) no-repeat;
+    background-position: center;
+    border-radius: 0!important;
+    height: 860px;
+    
 }
 
-/* Colors for brand */
-nav .navbar-brand .yellow
-{
-    color: #f5b82e;
+
+/* Decoration for brand and navigation */
+nav .navbar-brand .yellow{
+    color: #EEAA0B;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 39px;
 }
-nav .navbar-brand .green
-{
+nav .navbar-brand .green{
     color: #2e944b;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: 39px;
+}
+a.nav-link{
+    font-family: Roboto!important;
+    font-size: 18px;
+    margin: 0 6px 0 6px;
+}
+a.nav-link:hover{
+    background-color: #519259;
+    border-radius: 0.3em;
+    opacity: 0.6;
+    color: white!important;
 }
 
+
+/* Decoration for header in all size device*/
+.catchphrase {
+    color: #146356;
+    font-family: Titillium Web;
+    font-weight: 600;
+    font-size: 80px;
+}
+@media only screen and (max-width: 768px) {
+    .catchphrase{
+        font-size: 52px;
+        margin-top: 48px;
+    }
+}
+
+
+/* All kind of form */
+input:focus,
+button:focus {
+    box-shadow: 0 0 2px 3px #2e944b !important;
+}
+button, .myBtn {
+    background-color: #2e944b!important;
+    border: #2e944b !important;
+    border-radius: 0.3em;
+    color: white;
+    padding: 5px;
+    font-family: Roboto;
+}
+button:hover {
+    border: solid #EEAA0B !important;
+}
+.myForm {
+    background-color: white;
+    max-width: 300px;
+    padding: 20px;
+    border-radius: 0.3em;
+    opacity: 0.95;
+}
+
+
+/* -------------- Visualization page -------------- */
+#canvas{
+    background-color: white;
+    opacity: 0.98;
+    height: 80px;
+    border-radius: 0.3em;
+    
+}
+.metric-card {
+    opacity: 0.93;
+    box-shadow: 0 0 5px white;
+    border-radius: 0.3em;
+    text-align: center;
+    height: 100px;
+    width: 330px;
+}
+button.metric-card:hover {
+    color: black!important;
+    border: none!important;
+}
+button.metric-card:focus {
+    box-shadow: 0 0 2px 3px #EEAA0B !important;
+}
+.metric-card.temp {
+    background-color: #FCE38A!important;
+}
+.metric-card.ph{
+    background-color: #96BB7C!important;
+}
+.metric-card.rain{
+    background-color: #96BB7C!important;
+}
+.graph {
+    background-color: white;
+}
+/* end Visualization page */
+
+
+/* table */
 table {
     margin-bottom: 1rem;
     width: 100%;

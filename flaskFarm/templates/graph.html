@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Graph
+{% endblock %}
+
+
+{% block main %}
+<div class="row ">
+    <!-- metric option -->
+    <div class="col-lg-3 col-md-3 col-sm-12">
+        <button class="metric-card rain" id="rainFall"><img src="../static/rainfall.png" alt="rainfall" type="submit"
+                height="50px">
+            rainFall</button>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-12">
+        <button class="metric-card temp" id="Temperature"><img src="../static/temp.png" alt="rainfall" type="submit"
+                height="80px">
+            Temperature</button>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-12">
+        <button class="metric-card ph" id="pH"><img src="../static/pH.png" alt="rainfall" type="submit" height="50px">
+            pH</button>
+    </div>
+
+    <!-- graph placeholder -->
+    <div class="col-lg-9 col-md-12 col-sm-12 ">
+        <canvas id="canvas" class="mt-3"></canvas>
+    </div>
+</div>
+
+<script>
+    const months = ['Jan', 'Feb', 'Mar', 'Apr'];
+    var colors = ['lightblue', 'lightgreen', 'pink'];
+
+    // for "global" access
+    var myBarChart = null;
+
+    function createBarChart() {
+        let ctx = document.getElementById('canvas').getContext('2d');
+        let typeChart = 'bar';
+        let myTitle = 'Temperature';
+        console.log("createBarChart");
+        myBarChart = new Chart(ctx, {
+            type: typeChart,
+            data: {
+                labels: months,
+                datasets: []
+            },
+            options: {
+                responsive: true,
+                legend: {
+                    position: 'bottom',
+                },
+                title: {
+                    display: true,
+                    text: myTitle
+                }
+            }
+        });
+    }
+
+    function addData(chart, title, data) {
+        chart.options.title.text = title;
+        chart.data.datasets.forEach((dataset, i) => {
+            dataset.data = data;
+        });
+        chart.update();
+    }
+
+    function removeData(myChart) {
+        console.log('removeData', myChart);
+        if (myChart.data.datasets.length > 0) {
+            myChart.data.datasets.forEach((dataset) => {
+                dataset.data.pop();
+            });
+            chart.update();
+        }
+    }
+
+    window.onload = function () {
+        createBarChart();
+    };
+    document.getElementById("Temperature").onclick = function () {
+        fetch('http://127.0.0.1:5000/demographdata')
+            .then(res => res.json())
+            .then((out) => {
+                console.log('Output: ', out);
+                removeData(myBarChart);
+                years = Object.keys(out);
+                for (let year in out) {
+                    metric_value = Object.values(out[year]);
+                    myBarChart.data.datasets.push({ data: metric_value, label: year, backgroundColor: colors.pop() });
+                    console.log(metric_value)
+                    console.log(year)
+                }
+                myBarChart.update();
+            }).catch(err => console.error(err));
+    };
+</script>
+{% endblock %}
