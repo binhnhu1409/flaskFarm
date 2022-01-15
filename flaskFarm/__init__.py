@@ -245,26 +245,6 @@ def create_app(test_config=None):
             db.execute(add_to_table)
             db.commit()
 
-    @ app.route("/demoapi")
-    def demo():
-        demoData = [{'Farm_name': 'Friman Metsola collective', 'date': 31, 'month': 12,
-                     'year': 2018, 'metric_type': 'pH', 'metric_value': 6.52},
-                    {'Farm_name': 'Friman Metsola collective', 'date': 31, 'month': 12,
-                     'year': 2018, 'metric_type': 'rainFall', 'metric_value': 2.6},
-                    {'Farm_name': 'Friman Metsola collective', 'date': 1, 'month': 1,
-                     'year': 2019, 'metric_type': 'temperature', 'metric_value': -9},
-                    {'Farm_name': 'Friman Metsola collective', 'date': 1, 'month': 1,
-                     'year': 2019, 'metric_type': 'temperature', 'metric_value': -12.2},
-                    {'Farm_name': 'Friman Metsola collective', 'date': 1, 'month': 1,
-                     'year': 2019, 'metric_type': 'temperature', 'metric_value': -8.9},
-                    {'Farm_name': 'Friman Metsola collective', 'date': 1, 'month': 1,
-                     'year': 2019, 'metric_type': 'temperature', 'metric_value': -8.6},
-                    {'Farm_name': 'Friman Metsola collective', 'date': 1, 'month': 1,
-                     'year': 2019, 'metric_type': 'temperature', 'metric_value': -8.4},
-                    {'Farm_name': 'Friman Metsola collective', 'date': 31, 'month': 12,
-                     'year': 2018, 'metric_type': 'temperature', 'metric_value': -13.9}]
-        return jsonify(demoData)
-
     @ app.route("/visualize")
     @login_required
     def graph():
@@ -272,10 +252,11 @@ def create_app(test_config=None):
 
         return render_template("graph.html")
 
-    @ app.route("/temperature")
-    @login_required
-    def temperatureData():
-        """Query temperature data from user database, assuming user database only have 1 farm"""
+    def queryMetricValueByTime(metric_type):
+        """Query metric value by time, assuming user database only have 1 farm"""
+
+        # initial empty dict
+        yearly_data = {}
 
         # connect db to query more information
         db = get_db()
@@ -286,68 +267,60 @@ def create_app(test_config=None):
         user = db.execute("SELECT * FROM user WHERE id = ?",
                           (user_id,)).fetchone()
         username = user["username"]
-        print('username:', username, type(username))
 
         # Query year from user database
         years = db.execute(
             '''SELECT DISTINCT year FROM {} '''.format(username,)).fetchall()
 
-        # initial empty dict
-        yearly_data = {}
         # loop through the year to get all min, max value by month
-        # valuesByMonth is a list, can access month by valuesByMonth[0]["month"]
-        # valuesByMonth[i]["MIN(metric_value)"]
         for year in years:
 
+            # initial empty dict
             yearly_data[year["year"]] = {}
             yearly_data_append = {}
+
+            # query to get month, min, max metric value
             query = '''SELECT month, MIN(metric_value), MAX(metric_value)
                 FROM {}
-                WHERE metric_type = 'temperature' AND year = {} 
+                WHERE metric_type = '{}' AND year = {} 
                 GROUP BY month
-                ORDER BY month'''.format(username, year["year"])
-            print("query", query)
+                ORDER BY month'''.format(username, metric_type, year["year"])
             valuesByMonth = db.execute(query).fetchall()
 
-            print('valuebymonth:', valuesByMonth, type(valuesByMonth))
-
+            # loop through get all min, max value by month to the existing dict
             for i in range(len(valuesByMonth)):
                 month = valuesByMonth[i]["month"]
                 min_value = valuesByMonth[i]["MIN(metric_value)"]
                 max_value = valuesByMonth[i]["MAX(metric_value)"]
-                print('month:', valuesByMonth[i]["month"])
-                print('min:', valuesByMonth[i]["MIN(metric_value)"])
-                print('max:', valuesByMonth[i]["MAX(metric_value)"])
                 yearly_data_append[month] = [min_value, max_value]
 
+            # append all values to a year
             yearly_data[year["year"]] = yearly_data_append
 
-            #yearly_data = {year: {month: [min_value, max_value]}}
+        return yearly_data
 
-        print(yearly_data)
+    @ app.route("/temperature")
+    @login_required
+    def temperatureData():
+        """Query temperature data from user database"""
 
+        yearly_data = queryMetricValueByTime('temperature')
         return jsonify(yearly_data)
 
     @ app.route("/ph")
     @login_required
     def phData():
-        """Query pH data from user database, assuming user database only have 1 farm"""
+        """Query pH data from user database"""
 
-        yearly_data = {
-            2018: {'Jan': [0, 2], 'Feb': [2, 3], 'Mar': [2, 5], 'Apr': [4, 8]},
-            2019: {'Jan': [0, 4], 'Feb': [2, 6], 'Mar': [8, 10], 'Apr': [5, 10]}
-        }
+        yearly_data = queryMetricValueByTime('pH')
         return jsonify(yearly_data)
 
     @ app.route("/rainfall")
     @login_required
     def rainfallData():
-        """Query rainFall data from user database, assuming user database only have 1 farm"""
+        """Query rainFall data from user database"""
 
-        yearly_data = {
-            2018: {'Jan': [0, 0], 'Feb': [100, 500], 'Mar': [400, 500], 'Apr': [200, 300]},
-            2019: {'Jan': [0, 50], 'Feb': [40, 150], 'Mar': [200, 300], 'Apr': [100, 400]}
-        }
+        yearly_data = queryMetricValueByTime('rainFall')
         return jsonify(yearly_data)
 
     return app
