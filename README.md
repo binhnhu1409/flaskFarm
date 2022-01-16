@@ -1,5 +1,5 @@
 # :herb: flaskFarm :herb: 
-**flaskFarm** is a humble Flask based web application for farm management, for instance, loading & visualization data and etc. Potential users could be a farm manager or a farmer. Once users register, this tool will allow them to upload their farm data, which might take a while if the data is big. It will also show uploaded data in form of graphs when users click in any metric button. In regarding of uploading farm data, the users need to follow certain requirements as mentioned on the page itself.
+**flaskFarm** is a humble Flask based web application for farm management, for instance, loading & visualization data and etc. Potential users could be a farm manager or a farmer. Once users register, this tool will allow them to upload their farm data, which might take a while if the data is big. It will also show uploaded data in form of graphs when users click in any metric button. In regarding of uploading farm data, the users need to follow certain requirements as mentioned on the page itself. This version *currently  only support a farm for each user* meaning your [Farm name] should be the same when upload CSV file.
 
 ## [flaskFarm deploy page](https://flask-farm-ii6rp.ondigitalocean.app/register)
 
