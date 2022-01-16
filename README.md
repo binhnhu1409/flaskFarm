@@ -37,6 +37,16 @@ FARM
 - Upload data
 - Visualization farm's data in bar chart
 
+### Tasks have been done:
+- CSV parsing and validation
+- Endpoints to fetch data by metric
+- Input and output validation
+- Show data in graphs
+- Add filtering options by metric
+- Add user login for data manipulation
+- Endpoints to store new data
+
+
 ## How to run this web application
 This project was built on **Window** using **Visual Studio Code**. So the instruction currently is available for Window only as no test has been done on other operating systems. Before compiling and run the project, make sure:
 
