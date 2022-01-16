@@ -54,7 +54,7 @@ This project was built on **Window** using **Visual Studio Code**. So the instru
 
 After activate your CMD should look like:
 
-![image](https://github.com/binhnhu1409/flaskFarm/blob/clear_ver1/flaskFarm/static/readme_image/activate_venv.png)
+![image](https://github.com/binhnhu1409/flaskFarm/blob/main/flaskFarm/static/readme_image/activate_venv.png)
 
 ### Install FLASK
 - Before install Flask, remember to activate your virtual environment whenever you open a new CMD:
@@ -73,8 +73,9 @@ After activate your CMD should look like:
     ```
 - After *flask run* you should be see a link like this, click into that link to access the web app:
 
-![image](https://github.com/binhnhu1409/flaskFarm/blob/clear_ver1/flaskFarm/static/readme_image/flask%20run.png)
+![image](https://github.com/binhnhu1409/flaskFarm/blob/main/flaskFarm/static/readme_image/flask%20run.png)
 
+- You can register as a user to play around with this [sample data](https://github.com/binhnhu1409/flaskFarm/blob/main/flaskFarm/static/sample%20data%20ossi_farm.csv)
 
 ## Used technologies:
 ### Front-end:
