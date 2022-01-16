@@ -1,8 +1,10 @@
 # :herb: flaskFarm :herb: 
-**flaskFarm** is a humble Flask based web application for farm management software, for instance, loading & visualization data and etc. Potential users could be a farm manager or a farmer. Once users register, this tool will allow them to upload their farm data, which might take a while if the data is big. It will also show users data in form of graphs when users click in any metric button. In regarding of uploading farm data, the users need to follow certain requirements as mentioned on the page itself. 
+**flaskFarm** is a humble Flask based web application for farm management, for instance, loading & visualization data and etc. Potential users could be a farm manager or a farmer. Once users register, this tool will allow them to upload their farm data, which might take a while if the data is big. It will also show uploaded data in form of graphs when users click in any metric button. In regarding of uploading farm data, the users need to follow certain requirements as mentioned on the page itself. 
 
 ![image](https://github.com/binhnhu1409/flaskFarm/blob/main/flaskFarm/static/readme_image/sample.JPG)
 ![image](https://github.com/binhnhu1409/flaskFarm/blob/main/flaskFarm/static/readme_image/sample2.JPG)
+
+![image](https://github.com/binhnhu1409/flaskFarm/blob/main/flaskFarm/static/readme_image/upload_page.png)
 
 ## Project structure
 This is my first project working on backend.
@@ -33,18 +35,16 @@ FARM
             upload.html
 ```
 ### Feature included:
-- Login/ logout/ register
-- Upload data
-- Visualization farm's data in bar chart
+- User login/ logout/ register
+- Upload data in CSV format
+- Visualization farm's data in bar chart by monthly min, max values.
 
 ### Tasks have been done:
 - CSV parsing and validation
 - Endpoints to fetch data by metric
-- Input and output validation
-- Show data in graphs
+- Show summarized data in graphs
 - Add filtering options by metric
 - Add user login for data manipulation
-- Endpoints to store new data
 
 
 ## How to run this web application
@@ -89,20 +89,20 @@ After activate your CMD should look like:
 
 ![image](https://github.com/binhnhu1409/flaskFarm/blob/main/flaskFarm/static/readme_image/flask%20run.png)
 
-- You can register as a user to play around with this [sample data](https://github.com/binhnhu1409/flaskFarm/blob/main/flaskFarm/static/sample%20data%20ossi_farm.csv)
+- You can register as a user to play around with this [sample data](https://github.com/binhnhu1409/flaskFarm/blob/main/flaskFarm/static/sample_data_ossi_farm.csv)
 
 ## Used technologies:
 ### Front-end:
 - HTML
 - CSS
-- Charjs
+- Chartjs
 - JavaScript
 - Bootstrap
 
 ### Back-end:
 - Python
 - Flask
-- Using SQL for CSV parsing and validation data
+- SQLite3
 - RestAPI 
 
 
