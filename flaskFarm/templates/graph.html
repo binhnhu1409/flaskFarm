@@ -109,7 +109,7 @@ Graph
             .then(res => res.json())
             .then((out) => {
                 console.log('Output: ', out);
-                myBarChart.options.title.text = 'Temperature bar chart';
+                myBarChart.options.title.text = 'Temperature bar chart (by monthly min, max values)';
                 updateData(out);
             }).catch(err => console.error(err));
     };
@@ -119,7 +119,7 @@ Graph
             .then(res => res.json())
             .then((out) => {
                 console.log('Output: ', out);
-                myBarChart.options.title.text = 'pH bar chart';
+                myBarChart.options.title.text = 'pH bar chart (by monthly min, max values)';
                 updateData(out);
             }).catch(err => console.error(err));
     };
@@ -129,7 +129,7 @@ Graph
             .then(res => res.json())
             .then((out) => {
                 console.log('Output: ', out);
-                myBarChart.options.title.text = 'Rain fall bar chart';
+                myBarChart.options.title.text = 'Rain fall bar chart (by monthly min, max values)';
                 updateData(out);
             }).catch(err => console.error(err));
     };

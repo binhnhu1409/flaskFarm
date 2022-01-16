@@ -70,8 +70,6 @@ def create_app(test_config=None):
             usernameCheck = db.execute(
                 "SELECT * FROM user WHERE username = ?", (username,)).fetchone()
 
-            print('usernameCHekc', usernameCheck)
-
             if usernameCheck == None or len(usernameCheck) == 0:
                 db.execute("INSERT INTO user (username, hash) VALUES (?, ?)",
                            (username, generate_password_hash(password)),)
@@ -165,7 +163,6 @@ def create_app(test_config=None):
                 # save the file
                 uploaded_file.save(file_path)
                 parseCSV(file_path)
-                print('file path is:', file_path)
             flash("Successfully upload")
             return redirect("/")
 
