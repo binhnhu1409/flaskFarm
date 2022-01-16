@@ -32,6 +32,10 @@ FARM
             register.html
             upload.html
 ```
+### Feature included:
+- Login/ logout/ register
+- Upload data
+- Visualization farm's data in bar chart
 
 ## How to run this web application
 This project was built on **Window** using **Visual Studio Code**. So the instruction currently is available for Window only as no test has been done on other operating systems. Before compiling and run the project, make sure:
