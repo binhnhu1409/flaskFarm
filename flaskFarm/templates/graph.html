@@ -105,7 +105,7 @@ Graph
     // 3 button for 3 metric_type: pH, temperature, rainfall
     // Temperature
     document.getElementById("Temperature").onclick = function () {
-        fetch('http://127.0.0.1:5000/temperature')
+        fetch(document.location.origin + '/temperature')
             .then(res => res.json())
             .then((out) => {
                 console.log('Output: ', out);
@@ -115,7 +115,7 @@ Graph
     };
     // pH
     document.getElementById("pH").onclick = function () {
-        fetch('http://127.0.0.1:5000/ph')
+        fetch(document.location.origin + '/ph')
             .then(res => res.json())
             .then((out) => {
                 console.log('Output: ', out);
@@ -125,7 +125,7 @@ Graph
     };
     // rainFall
     document.getElementById("rainFall").onclick = function () {
-        fetch('http://127.0.0.1:5000/rainfall')
+        fetch(document.location.origin + '/rainfall')
             .then(res => res.json())
             .then((out) => {
                 console.log('Output: ', out);
