@@ -1,5 +1,4 @@
 import os
-from tkinter import Y
 
 from flask import Flask, render_template, request, redirect, session, flash, jsonify
 import pandas as pd
