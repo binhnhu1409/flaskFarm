@@ -250,7 +250,23 @@ def create_app(test_config=None):
     def graph():
         """Showing user visualization page"""
 
-        return render_template("graph.html")
+        # connect db to query more information
+        db = get_db()
+
+        # get current user_id
+        user_id = session.get("user_id")
+        # from user_id get username to access user table, which is also username
+        user = db.execute("SELECT * FROM user WHERE id = ?",
+                          (user_id,)).fetchone()
+        username = user["username"]
+
+        # Query farm name from user database
+        farm = db.execute(
+            '''SELECT DISTINCT Farm_name FROM {} '''.format(username,)).fetchone()
+        farm_name = farm["Farm_name"]
+
+        flash("Click on any metric button to see your farm's data in below graph.")
+        return render_template("graph.html", farm_name=farm_name)
 
     def queryMetricValueByTime(metric_type):
         """Query metric value by time, assuming user database only have 1 farm"""

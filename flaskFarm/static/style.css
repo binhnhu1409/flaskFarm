@@ -1,4 +1,4 @@
-/* General */
+/* ------------ General --------------- */
 body {
     background: url(background.jpg) no-repeat;
     background-position: center;
@@ -8,7 +8,7 @@ body {
 }
 
 
-/* Decoration for brand and navigation */
+/* ---------- Decoration for brand and navigation ----------- */
 nav .navbar-brand .yellow{
     color: #EEAA0B;
     font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
@@ -32,7 +32,7 @@ a.nav-link:hover{
 }
 
 
-/* Decoration for header in all size device*/
+/* --------- Decoration for header in all size device ---------- */
 .catchphrase {
     color: #146356;
     font-family: Titillium Web;
@@ -47,7 +47,7 @@ a.nav-link:hover{
 }
 
 
-/* All kind of form */
+/* ------------------ All kind of form -------------- */
 input:focus,
 button:focus {
     box-shadow: 0 0 2px 3px #2e944b !important;
@@ -101,19 +101,27 @@ button.metric-card:focus {
 .metric-card.temp {
     background-color: #FCE38A!important;
 }
-.metric-card.ph{
+.metric-card.ph, 
+.metric-card.rain {
     background-color: #96BB7C!important;
 }
-.metric-card.rain{
-    background-color: #96BB7C!important;
+.farm {
+    background-color: #FCE38A!important;
+    color: #146356;
 }
+button.farm:hover,
+button.farm:focus {
+    box-shadow: none!important;
+    border: none!important;
+    color: #146356!important;
+}
+
 .graph {
     background-color: white;
 }
-/* end Visualization page */
 
 
-/* Upload page */
+/* ------------ Upload page ----------- */
 .background {
     background-color: white;
     opacity: 0.95;
