@@ -1,5 +1,9 @@
 # :herb: flaskFarm :herb: 
-**flaskFarm** is a humble Flask based web application for farm management, for instance, loading & visualization data and etc. Potential users could be a farm manager or a farmer. Once users register, this tool will allow them to upload their farm data, which might take a while if the data is big. It will also show uploaded data in form of graphs when users click in any metric button. In regarding of uploading farm data, the users need to follow certain requirements as mentioned on the page itself. 
+**flaskFarm** is a humble Flask based web application for farm management, for instance, loading & visualization data and etc. Potential users could be a farm manager or a farmer. Once users register, this tool will allow them to upload their farm data, which might take a while if the data is big. It will also show uploaded data in form of graphs when users click in any metric button. In regarding of uploading farm data, the users need to follow certain requirements as mentioned on the page itself.
+
+## [flaskFarm deploy page](https://flask-farm-ii6rp.ondigitalocean.app/register)
+
+As I deployed this project on DigitalOcean with low budget, there is a limitation on how big your CSV file is without crashing the app. You can register as a user to play around with this [sample data](https://github.com/binhnhu1409/flaskFarm/blob/main/flaskFarm/static/sample_data_Nooras_farm.csv)
 
 ![image](https://github.com/binhnhu1409/flaskFarm/blob/main/flaskFarm/static/readme_image/sample.JPG)
 ![image](https://github.com/binhnhu1409/flaskFarm/blob/main/flaskFarm/static/readme_image/sample2.JPG)
@@ -89,7 +93,6 @@ After activate your CMD should look like:
 
 ![image](https://github.com/binhnhu1409/flaskFarm/blob/main/flaskFarm/static/readme_image/flask%20run.png)
 
-- You can register as a user to play around with this [sample data](https://github.com/binhnhu1409/flaskFarm/blob/main/flaskFarm/static/sample_data_ossi_farm.csv)
 
 ## Used technologies:
 ### Front-end:
